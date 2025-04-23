@@ -32,7 +32,5 @@ const handleLogout = () => {
 };
 
 // Проверяем авторизацию при загрузке приложения
-onMounted(() => {
-  authStore.checkAuth();
-});
+onMounted(() => {});
 </script>

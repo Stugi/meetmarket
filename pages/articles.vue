@@ -37,8 +37,20 @@
 </template>
 
 <script setup lang="ts">
+const router = useRouter();
+const authStore = useAuthStore();
 const searchQuery = ref("");
 const favoritesStore = useFavoritesStore();
+
+// Инициализируем авторизацию
+onMounted(() => {
+  authStore.initialize();
+  if (!authStore.isAuthenticated) {
+    router.push("/login");
+    return;
+  }
+  favoritesStore.initializeFromLocalStorage();
+});
 
 // Получаем данные через GraphQL
 const { result, loading, error } = useArticles();
@@ -62,8 +74,4 @@ const toggleFavorite = (id: number) => {
     favoritesStore.addFavorite(id);
   }
 };
-
-onMounted(() => {
-  favoritesStore.initializeFromLocalStorage();
-});
 </script>

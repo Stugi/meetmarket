@@ -15,14 +15,22 @@
             v-model="email"
             type="email"
             required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            :class="[
+              'mt-1 block w-full rounded-md shadow-sm',
+              emailError ? 'border-red-500' : 'border-gray-300',
+              'focus:border-indigo-500 focus:ring-indigo-500',
+            ]"
           />
+          <p v-if="emailError" class="mt-1 text-sm text-red-600">
+            {{ emailError }}
+          </p>
         </div>
         <button
           type="submit"
-          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          :disabled="isLoading"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
         >
-          Войти
+          {{ isLoading ? "Вход..." : "Войти" }}
         </button>
       </form>
     </div>
@@ -33,9 +41,45 @@
 const router = useRouter();
 const authStore = useAuthStore();
 const email = ref("");
+const emailError = ref("");
+const isLoading = ref(false);
 
-const handleLogin = () => {
-  authStore.login(email.value);
-  router.push("/articles");
+// Проверяем авторизацию при загрузке страницы
+onMounted(() => {
+  authStore.initialize();
+  if (authStore.isAuthenticated) {
+    router.push("/articles");
+  }
+});
+
+const validateEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const handleLogin = async () => {
+  emailError.value = "";
+
+  if (!email.value) {
+    emailError.value = "Email обязателен";
+    return;
+  }
+
+  if (!validateEmail(email.value)) {
+    emailError.value = "Введите корректный email";
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    // Фейковый логин
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    authStore.login(email.value);
+    router.push("/articles");
+  } catch (error) {
+    emailError.value = "Произошла ошибка при входе";
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
