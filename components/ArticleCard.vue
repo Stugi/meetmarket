@@ -10,7 +10,7 @@
     <button
       @click="emitToggleFavorite"
       :class="[
-        'px-4 py-2 rounded font-medium transition-colors duration-150 w-full text-left mt-auto', // <<< Добавлен mt-auto
+        'px-4 py-2 rounded font-medium transition-colors duration-150 w-full text-left mt-auto',
         isFavorite
           ? 'bg-red-100 text-red-700 hover:bg-red-200'
           : 'bg-indigo-500 text-white hover:bg-indigo-600',
