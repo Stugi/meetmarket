@@ -30,7 +30,4 @@ const handleLogout = () => {
   authStore.logout();
   router.push("/login");
 };
-
-// Проверяем авторизацию при загрузке приложения
-onMounted(() => {});
 </script>

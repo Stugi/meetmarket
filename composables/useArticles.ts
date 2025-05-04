@@ -1,21 +1,31 @@
-import gql from 'graphql-tag'
 import { useQuery } from '@vue/apollo-composable'
+import type { UseQueryReturn } from '@vue/apollo-composable'
+import gql from 'graphql-tag'
+import type { Post } from '~/types';
 
-export const POSTS_QUERY = gql`
-  query GetPosts($options: PageQueryOptions) {
-    posts(options: $options) {
+  interface GetArticlesQuery {
+      posts: {
+       data: Post[];
+      }
+    }
+
+
+const ARTICLES_QUERY = gql`
+  query GetArticles {
+    posts {
       data {
         id
         title
         body
       }
-      meta {
-        totalCount
-      }
     }
   }
 `
 
-export function useArticles(options = {}) {
-  return useQuery(POSTS_QUERY, { options })
+export function useArticles(): UseQueryReturn<GetArticlesQuery, {}> {
+  const queryResult = useQuery(ARTICLES_QUERY)
+
+  return {
+    ...queryResult,
+  }
 }
